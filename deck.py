@@ -21,5 +21,5 @@ class Deck():
             card = Card(value, suit)
             cards.append(card)
 
-        return 
+        return cards
 
