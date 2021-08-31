@@ -102,10 +102,11 @@ def test8():
         print('Bank at end of round %s: '%(i+1), B)
         print('--------------------------------------------')
 
-test8()
+# test8()
 
 def test9():
     # a = [(10, True), (11, False)]
     # sums = np.array(a).flatten()[::2]
     # print(sums)
     None
+
