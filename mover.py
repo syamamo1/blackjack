@@ -1,5 +1,47 @@
+import random
+from deck import Deck
+# This class takes in cards_in_play 
+# and outputs finished_hands (both dictionaries)
 class Mover():
-        # Dealer hits until >= 17 or on soft 17
+
+    def __init__(self, num_players, bank, pot):
+        self.deck = Deck().get()
+        self.cards_in_play = {}
+        self.finished_hands = {}
+        self.bank = bank
+        self.pot = pot
+
+    def get(self):
+        return self.finished_hands, self.bank, self.pot
+
+    def compute(self):
+        self.deal_cards()
+        for i in range(self.num_players):
+            player = 'Player%s'%(i+1)
+            self.player_move(player)
+        self.dealer_move()
+
+    def deal_cards(self):
+        self.dealer_card1 = self.random_card()
+        dealer_card2 = self.random_card()
+        self.cards_in_play['Dealer'] = [[self.dealer_card1, dealer_card2]]
+        self.finished_hands['Dealer'] = []
+
+        for i in range(self.num_players):
+            player_card1 = self.random_card()
+            player_card2 = self.random_card()
+            self.cards_in_play['Player%s'%(i+1)] = [[player_card1, player_card2]]
+            self.finished_hands['Player%s'%(i+1)] = []
+
+    # doesn't account for deck running out of cards
+    def random_card(self):
+        random_int = random.randint(0, len(self.deck)-1)
+        card = self.deck[random_int]
+        self.deck.remove(card)
+
+        return card
+
+    # Dealer hits until >= 17 or on soft 17
     # Returns value of hand
     def dealer_move(self):
         sum, soft = self.check_status(self.cards_in_play['Dealer'][0])

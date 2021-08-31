@@ -12,9 +12,7 @@ class Game():
         self.pot = pot
 
     def deal_cards(self):
-        self.dealer_card1 = self.random_card()
-        dealer_card2 = self.random_card()
-        self.cards_in_play['Dealer'] = [[self.dealer_card1, dealer_card2]]
+        self.cards_in_play['Dealer'] = [[self.random_card(), self.random_card()]]
         self.finished_hands['Dealer'] = []
 
         for i in range(self.num_players):
@@ -271,6 +269,11 @@ class Game():
 
         # Compare scores
         dealer_score = self.get_scores('Dealer')
+        if dealer_score > 21:
+            dealer_bust = True
+        else:
+            dealer_bust = False
+
         print('Dealer score: ', dealer_score)
         for i in range(self.num_players):
             player = 'Player%s'%(i+1)
@@ -280,19 +283,36 @@ class Game():
             print('Bet size: ', self.pot['Player1'])
 
             for score in player_scores:
-                if score > dealer_score:
-                    print('WIN')
-                    self.bank[player] += 2*round(self.pot[player]/len(self.finished_hands[player]),2)
-                    self.results[player].append('WIN')
+                if score > 21:
+                    player_bust = True
+                elif score <= 21:
+                    player_bust = False
 
-                elif score == dealer_score:
-                    print('TIE')
-                    self.bank[player] += round(self.pot[player]/len(self.finished_hands[player]),2)
-                    self.results[player].append('TIE')
+                if dealer_bust or player_bust:
+                    if dealer_bust and player_bust:
+                        print('LOSE')
+                        self.results[player].append('LOSE')
+                    elif dealer_bust:
+                        print('WIN')
+                        self.bank[player] += 2*round(self.pot[player]/len(self.finished_hands[player]),2)
+                        self.results[player].append('WIN')
+                    elif player_bust:
+                        print('LOSE')
+                        self.results[player].append('LOSE')
 
-                else:
-                    print('LOSE')
-                    self.results[player].append('LOSE')
+                elif not dealer_bust and not player_bust:
+                    if score > dealer_score:
+                        print('WIN')
+                        self.bank[player] += 2*round(self.pot[player]/len(self.finished_hands[player]),2)
+                        self.results[player].append('WIN')
+                    elif score == dealer_score:
+                        print('TIE')
+                        self.bank[player] += round(self.pot[player]/len(self.finished_hands[player]),2)
+                        self.results[player].append('TIE')
+                    else:
+                        print('LOSE')
+                        self.results[player].append('LOSE')
+
             self.pot[player] = 0
 
         return self.bank, self.results
