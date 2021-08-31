@@ -39,5 +39,6 @@ class Simulation():
 
 if __name__ == '__main__':
     S = Simulation()
-    S.run(1000000)
+    S.run(10)
     # .377 on 10k runs....little low huh?
+    # updated to .4746 on 1M runs
