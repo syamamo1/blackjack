@@ -11,7 +11,8 @@ class Mover():
         self.bank = bank
         self.pot = pot
 
-        self.deck = Deck().get()
+        self.deck = Deck(6).get()
+
         self.cards_in_play = {}
         self.finished_hands = {}
         self.scorer = Scorer()

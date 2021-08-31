@@ -16,6 +16,7 @@ class Game():
         mover.compute()
         self.finished_hands, self.bank, self.pot = mover.get()
 
+        results = {}
         # Compare scores
         dealer_score = self.scorer.get_scores(self.finished_hands['Dealer'])
         if dealer_score > 21:
@@ -27,44 +28,42 @@ class Game():
         for i in range(self.num_players):
             player = 'Player%s'%(i+1)
             player_scores = self.scorer.get_scores(self.finished_hands[player])
-            self.results[player] = []
+            results[player] = []
             print('Player score: ', player_scores)
             print('Bet size: ', self.pot['Player1'])
 
             for score in player_scores:
                 if score > 21:
                     player_bust = True
-                elif score <= 21:
+                else:
                     player_bust = False
 
                 if dealer_bust or player_bust:
                     if dealer_bust and player_bust:
                         print('LOSE')
-                        self.results[player].append('LOSE')
+                        results[player].append('LOSE')
                     elif dealer_bust:
                         print('WIN')
                         self.bank[player] += 2*round(self.pot[player]/len(self.finished_hands[player]),2)
-                        self.results[player].append('WIN')
+                        results[player].append('WIN')
                     elif player_bust:
                         print('LOSE')
-                        self.results[player].append('LOSE')
+                        results[player].append('LOSE')
 
                 elif not dealer_bust and not player_bust:
                     if score > dealer_score:
                         print('WIN')
                         self.bank[player] += 2*round(self.pot[player]/len(self.finished_hands[player]),2)
-                        self.results[player].append('WIN')
+                        results[player].append('WIN')
                     elif score == dealer_score:
                         print('TIE')
                         self.bank[player] += round(self.pot[player]/len(self.finished_hands[player]),2)
-                        self.results[player].append('TIE')
+                        results[player].append('TIE')
                     else:
                         print('LOSE')
-                        self.results[player].append('LOSE')
+                        results[player].append('LOSE')
 
-            self.pot[player] = 0
-
-        return self.bank, self.results
+        return self.bank, results
 
 
 

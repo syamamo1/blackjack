@@ -1,6 +1,6 @@
-from deck import Deck
 from game import Game
 from strategy import Strategy 
+import time
 
 class Simulation():
     
@@ -12,9 +12,14 @@ class Simulation():
         wins = 0
         losses = 0
         ties = 0
+        s = time.time()
+        tt = [s]
         for i in range(n):
+            if (i+1)%100000 == 0: 
+                tt.append(time.time()-tt[-1])
             G2.pot = self.collect_bets()
             self.bank, results = G2.play_round()
+
             print('Bank at end of round %s: '%(i+1), self.bank)
             print('--------------------------------------------')
 
@@ -25,12 +30,17 @@ class Simulation():
                     losses += 1
                 if result == 'TIE':
                     ties += 1
+        e = time.time()
+        print('Runtime: ', e-s)
+        print('Velocities: ', tt)
             
         print(wins/(wins+losses))
 
 
     def collect_bets(self):
-        pot = {'Player1': Strategy(self.bank['Player1'], 1).get()}
+        player1_strat = Strategy(self.bank['Player1'], 1).get()
+        pot = {'Player1': player1_strat}
+
         for player in pot:
             self.bank[player] -= pot[player]
 
@@ -39,6 +49,8 @@ class Simulation():
 
 if __name__ == '__main__':
     S = Simulation()
-    S.run(10)
+    S.run(1000000)
+
     # .377 on 10k runs....little low huh?
-    # updated to .4746 on 1M runs
+    # updated to .4734 on 3M runs
+    # (Approx 1min for 100k runs)
