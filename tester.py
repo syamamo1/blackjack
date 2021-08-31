@@ -1,10 +1,11 @@
 import numpy as np
 from deck import Deck
 from game import Game
+from strategy import Strategy 
 
 D = Deck().get()
 B = {'Player1': 100000}
-G = Game(1, B)
+# G = Game(1, B)
 
 def test1():
     print(len(D))
@@ -66,30 +67,45 @@ def test5(kk):
 
 # test5([1,2])
 hand5 = [D[0], D[13],D[26],D[39]]
-hand5 = [D[0], D[13]]
+hand6 = [D[0], D[13]] # 2,2 
 
 def test6(hand):
     G2 = Game(1, B)
     G2.deal_cards()
+    print('Dealer shows: ', G2.dealer_card1.value, G2.dealer_card1.suit)
     G2.cards_in_play['Player1'] = [hand]
-    print('Player delt', G2.check_status(G2.cards_in_play['Player1'][0]))
-    G2.print_hands('Player1')
-    print(' ')
-
     G2.player_move('Player1')
-    print('Player final', G2.check_status(G2.finished_hands['Player1'][0]))
     G2.print_hands('Player1')
+    print('--------------------------------------')
 
-test6(hand5)
+#test6(hand6)
 
 hand1 = [D[0]]
 hand2 = [D[13]]
 hands1 = [hand1, hand2]
 
-def test7(hands):
-    for hand in hands:
-        print(hand[0].value, hand[0].suit)
-    hands.remove(hand1)
-    print(len(hands))
+def test7():
+    for i in range(10):
+        test6(hand6)
+
+#test7()#
 
 # test7(hands1)
+
+def test8():
+    B = {'Player1': 100}
+    pot = {'Player1': Strategy(B['Player1'], 1).get()}
+    G2 = Game(1, B, pot)
+    for i in range(5):
+        G2.pot = pot
+        B = G2.run()
+        print('Bank at end of round %s: '%(i+1), B)
+        print('--------------------------------------------')
+
+test8()
+
+def test9():
+    # a = [(10, True), (11, False)]
+    # sums = np.array(a).flatten()[::2]
+    # print(sums)
+    None
