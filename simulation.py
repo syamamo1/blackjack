@@ -4,24 +4,30 @@ import time
 
 class Simulation():
     
+    # n == how many rounds
     def run(self, n):
-        start_bank = {'Player1': 10}
-        bank, pot = self.collect_bets(0, start_bank, None, None)
-        
-        G2 = Game(1, bank, pot)
+        G2 = Game()
         wins = 0
         losses = 0
         ties = 0
         # s = time.time()
         # tt = [s]
         for i in range(n):
+            start_bank = {'Player1': 10}
+            if i == 0:
+                bank, pot = self.collect_bets(0, start_bank, None, None)
+            else:
+                bank, pot = self.collect_bets(i+1, bank, prev_pot, results)
+
             # if (i+1)%100000 == 0: 
             #     tt.append(time.time()-tt[-1])
-            bank, return_pot, results = G2.play_round(1, bank, pot)
-            G2.bank, G2.pot = self.collect_bets(i, bank, return_pot, results)
+            bank, prev_pot, results = G2.play_round(bank, pot)
 
             print('Bank at end of round %s: '%(i+1), bank)
             print('--------------------------------------------')
+
+            if bank['Player1'] >= 20 or bank['Player1'] == 0:
+                exit()
 
             for result in results['Player1']:
                 if result == 'WIN':
@@ -30,27 +36,29 @@ class Simulation():
                     losses += 1
                 if result == 'TIE':
                     ties += 1
+            
 
         # e = time.time()
         # print('Runtime: ', e-s)
         # print('Velocities: ', tt)
         print(wins/(wins+losses))
 
-    def collect_bets(self, round_num, bank, return_pot, results):
-        for player in return_pot:
-            if player == 'Player1':
-                if round_num == 0:
-                    player1_strat = 1
-                else:
-                    player1_strat = Strategy().positive_progression_system1(bank['Player1'], return_pot, results)
-                pot = {'Player1': player1_strat}
-                bank[player] -= pot[player]
+    def collect_bets(self, round_num, bank, prev_pot, results):
+        new_pot = {}
+        for player in bank:
+            if round_num == 0:
+                bet = 1
+            elif player == 'Player1':
+                prev_bet = prev_pot[player]
+                bet = Strategy().positive_progression_system1(bank[player], prev_bet, results[player])
+            new_pot[player] = bet
+            bank[player] -= new_pot[player]
 
-        return bank, pot
+        return bank, new_pot
 
 if __name__ == '__main__':
     S = Simulation()
-    S.run(1000000)
+    S.run(100)
 
     # updated to .4734 on 3M runs
     # (Approx 1min for 100k runs)

@@ -6,10 +6,10 @@ from scorer import Scorer
 # and returns finished hands and money info
 class Mover():
 
-    def __init__(self, num_players, bank, pot):
-        self.num_players = num_players
+    def __init__(self, bank, pot):
         self.bank = bank
         self.pot = pot
+        self.initial_pot = pot
 
         self.deck = Deck(6).get()
 
@@ -22,8 +22,7 @@ class Mover():
 
     def compute(self):
         self.deal_cards()
-        for i in range(self.num_players):
-            player = 'Player%s'%(i+1)
+        for player in self.bank:
             self.player_move(player)
         self.dealer_move()
 
@@ -33,11 +32,11 @@ class Mover():
         self.cards_in_play['Dealer'] = [[self.dealer_card1, dealer_card2]]
         self.finished_hands['Dealer'] = []
 
-        for i in range(self.num_players):
+        for player in self.bank:
             player_card1 = self.random_card()
             player_card2 = self.random_card()
-            self.cards_in_play['Player%s'%(i+1)] = [[player_card1, player_card2]]
-            self.finished_hands['Player%s'%(i+1)] = []
+            self.cards_in_play[player] = [[player_card1, player_card2]]
+            self.finished_hands[player] = []
 
     def print_hands(self, player):
         for i in range(len(self.cards_in_play[player])):
@@ -196,12 +195,13 @@ class Mover():
 
     # Split hands, double bet
     def split_hand(self, player, hand):
+        print('Split Hand')
         savings = self.bank[player]
-        bet = self.pot[player]
+        initial_bet = self.initial_pot[player]
 
-        if savings >= bet:
-            self.pot[player] = 2*bet
-            self.bank[player] = savings - bet
+        if savings >= initial_bet:
+            self.pot[player] = self.pot[player] + initial_bet
+            self.bank[player] = savings - initial_bet
 
             new_hand1 = [hand[0]]
             new_hand1.append(self.random_card())
@@ -217,11 +217,12 @@ class Mover():
 
     # Double the bet but only one card left...
     def double_down(self, player, hand):
+        print('Double Down')
         savings = self.bank[player]
-        bet = self.pot[player]
-        if savings >= bet:
-            self.pot[player] = 2*bet
-            self.bank[player] = savings - bet
+        initial_bet = self.initial_pot[player]
+        if savings >= initial_bet:
+            self.pot[player] = self.pot[player] + initial_bet
+            self.bank[player] = savings - initial_bet
 
         new_hand = self.hit(player, hand)
         self.stand(player, new_hand)

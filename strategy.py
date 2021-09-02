@@ -1,3 +1,5 @@
+# Calling a betting strategy with the correct inputs
+# returns an amount to bet
 class Strategy():
 
     def constant_bet(self, savings):
@@ -5,9 +7,9 @@ class Strategy():
         if self.strat_num == 1:
             return self.check_bet(1, savings)
 
-    def positive_progression_system1(self, savings, results, prev_bet):
+    def positive_progression_system1(self, savings, prev_bet, results):
         # 1,2,3,..10 --> back to 1
-        if prev_bet == 10:
+        if prev_bet >= 10:
             return self.check_bet(1)
         wins, losses = self.count_wins_losses(results)
         if wins > losses:
@@ -17,7 +19,7 @@ class Strategy():
         elif wins < losses:
             return self.check_bet(1, savings)
 
-    def positive_progression_system2(self, savings, results, prev_bet):
+    def positive_progression_system2(self, savings, prev_bet, results):
         # 1,3,2,6 --> back to 1
         wins, losses = self.count_wins_losses(results)
         if wins > losses:
