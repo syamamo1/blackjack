@@ -4,10 +4,13 @@ import numpy as np
 class Scorer():
 
     # Returns scores for list of hands
-    def get_scores(self, hands):
-        results = list(map(self.check_status, hands))
-        sums = np.array(results).flatten()[::2]    
-        return sums
+    def get_scores_and_bets(self, hands):
+        results = []
+        for hand in hands:
+            score = self.check_status(hand.cards)[0]
+            results.append((score, hand.bet))
+
+        return results
         
     # Returns max value of cards and if soft
     def check_status(self, cards):
