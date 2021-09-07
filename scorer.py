@@ -1,5 +1,3 @@
-import numpy as np
-
 # Helper class that returns scores for hands
 class Scorer():
 
