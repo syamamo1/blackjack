@@ -21,7 +21,6 @@ class Game():
         else:
             dealer_bust = False
 
-        print('Dealer score: ', dealer_score)
         for player in bank:
             player_results = self.scorer.get_scores_and_bets(finished_hands[player])
             results[player] = []
@@ -29,9 +28,6 @@ class Game():
             for result in player_results:
                 score = result[0]
                 bet = result[1]
-                print('Player score: ', score)
-                print('Bet size: ', bet)
-                print('Savings: ', bank[player])
                 if score > 21:
                     player_bust = True
                 else:
@@ -40,36 +36,32 @@ class Game():
                 # If someone busts
                 if dealer_bust or player_bust:
                     if dealer_bust and player_bust:
-                        print('LOSE: ', bet)
                         results[player].append(('LOSE', bet))
                     elif dealer_bust:
-                        print('WIN: ', bet)
-                        bank[player] += 2*bet
-                        results[player].append(('WIN', bet))
+                        if score == 21:
+                            bank[player] += 2.5*bet
+                            results[player].append(('BLACKJACK', bet))      
+                        else:               
+                            bank[player] += 2*bet
+                            results[player].append(('WIN', bet))
                     elif player_bust:
-                        print('LOSE: ', bet)
                         results[player].append(('LOSE', bet))
 
                 elif not dealer_bust and not player_bust:
                     if score == 21:
                         if dealer_score == 21:
-                            print('TIE BLACKJACK')
                             bank[player] += bet
                             results[player].append(('TIE', bet))
                         else:
-                            print('BLACKJACK: ', 2.5*bet)
                             bank[player] += 2.5*bet
-                            results[player].append(('WIN', bet))                            
+                            results[player].append(('BLACKJACK', bet))                            
                     elif score > dealer_score:
-                        print('WIN: ', bet)
                         bank[player] += 2*bet
                         results[player].append(('WIN', bet))
                     elif score == dealer_score:
-                        print('TIE')
                         bank[player] += bet
                         results[player].append(('TIE', bet))
                     else:
-                        print('LOSE: ', bet)
                         results[player].append(('LOSE', bet))
 
         return bank, initial_bets, results

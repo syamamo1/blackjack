@@ -9,8 +9,11 @@ class Strategy():
 
     def positive_progression_system1(self, savings, prev_bet, results):
         # 1,2,3,..10 --> back to 1
+        if savings >= 20 or savings == 0:
+            return 0
         if prev_bet >= 10:
-            return self.check_bet(1)
+            return self.check_bet(1, savings)
+
         wins, losses = self.count_wins_losses(results)
         if wins > losses:
             return self.check_bet(prev_bet+1, savings)

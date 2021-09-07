@@ -37,17 +37,6 @@ class Mover():
             self.hands_in_play[player] = [player_hand]
             self.finished_hands[player] = []
 
-    # # Prolly don't work -----
-    # def print_hands(self, player):
-    #     for i in range(len(self.hands_in_play[player])):
-    #         print(player, 'Unfinished Hand')
-    #         for card in self.hands_in_play[player][i]:
-    #             print(card.value, card.suit)
-    #     for i in range(len(self.finished_hands[player])):
-    #         print(player, 'Finished Hand')
-    #         for card in self.finished_hands[player][i]:
-    #             print(card.value, card.suit)
-
     # Doesn't account for deck running out of cards
     def random_card(self):
         random_int = random.randint(0, len(self.deck)-1)
@@ -195,7 +184,6 @@ class Mover():
 
     # Split hands, double bet
     def split_hand(self, player, hand):
-        print('Split Hand')
         savings = self.bank[player]
         bet = hand.bet
 
@@ -217,7 +205,6 @@ class Mover():
 
     # Double the bet but only one card left...
     def double_down(self, player, hand):
-        print('Double Down')
         savings = self.bank[player]
         bet = hand.bet
         if savings >= bet:
